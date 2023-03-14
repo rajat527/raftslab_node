@@ -1,3 +1,3 @@
-# npm i
+# npm start
 To start the server
-npm start
+
