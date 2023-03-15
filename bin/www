@@ -31,7 +31,7 @@ mongoose.connection.on("connected", (err, res) => {
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || 3025);
 app.set('port', port);
 
 /**
