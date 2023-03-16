@@ -17,7 +17,7 @@ router.put("/edit/:id",AUTHENTICATION,AUTH_CONTROLLER.editUser)
 router.get("/getAll",AUTHENTICATION,AUTH_CONTROLLER.getAllUserList)
 router.get("/getById/:id",AUTHENTICATION,AUTH_CONTROLLER.getSingleUserDetail)
 router.put("/softDelete/:id",AUTHENTICATION,AUTH_CONTROLLER.updateUserState)
-router.delete("/delete",AUTHENTICATION,AUTH_CONTROLLER.deleteUser)
+router.delete("/delete/:id",AUTHENTICATION,AUTH_CONTROLLER.deleteUser)
 
 
 

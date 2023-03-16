@@ -50,7 +50,7 @@ auth.signup = async (req, res) => {
     catch (err) {
         console.log(err)
         res.send({
-            message:err.message
+            message: err.message
         })
     }
 
@@ -74,9 +74,9 @@ auth.login = async (req, res) => {
             if (result) {
                 // send detail of user in token
                 tokenPayload = {
-                    userId:existingUser._id,
-                    role:existingUser.role,
-                    email:existingUser.email
+                    userId: existingUser._id,
+                    role: existingUser.role,
+                    email: existingUser.email
 
                 }
                 // Create token
@@ -133,41 +133,42 @@ auth.login = async (req, res) => {
  */
 auth.editUser = async (req, res) => {
     try {
-// only Admin (role:1) have permission to edit user detials
-if(req.role == 1){
-    data = req.body    
-    let existingUserDetail = await AUTH_MODEL.findOne({ _id: req.params.id })
-    if (existingUserDetail) {
-        let updateUserDetails = await AUTH_MODEL.findOneAndUpdate({ _id: req.params.id }, { data })
-        if (updateUserDetails) {
-            res.status(SUCCESS_STATUS).send({
-                success: true,
-                message: 'User edit successfully',
-                data: updateUserDetails
-            })
+        // only Admin (role:1) have permission to edit user detials
+        if (req.role == 0) {
+            data = req.body
+            let existingUserDetail = await AUTH_MODEL.findOne({ _id: req.params.id })
+            if (existingUserDetail) {
+                let updateUserDetails = await AUTH_MODEL.findOneAndUpdate({ _id: req.params.id }, data)
+                if (updateUserDetails) {
+                    let UserDetail = await AUTH_MODEL.findOne({ _id: req.params.id })
+                    res.status(SUCCESS_STATUS).send({
+                        success: true,
+                        message: 'User edit successfully',
+                        data: UserDetail
+                    })
+                }
+                else {
+                    res.status(BAD_REQUEST).send({
+                        success: false,
+                        message: 'Something went wrong'
+                    })
+                }
+
+            }
+            else {
+                res.status(BAD_REQUEST).send({
+                    success: false,
+                    message: 'User not found'
+                })
+            }
         }
         else {
             res.status(BAD_REQUEST).send({
                 success: false,
-                message: 'Something went wrong'
+                message: 'Only admin have permission to edit user details'
             })
         }
 
-    }
-    else {
-        res.status(BAD_REQUEST).send({
-            success: false,
-            message: 'User not found'
-        })
-    }
-}
-else{
-    res.status(BAD_REQUEST).send({
-        success:false,
-        message:'Only admin have permission to edit user details'
-    })
-}
-      
     }
     catch (error) {
         console.log(error)
@@ -248,17 +249,22 @@ auth.getSingleUserDetail = async (req, res) => {
 }
 
 
-// soft Delete  user
+/**
+ * SOFT DELETE USER (CHANGE USER STATE TO DELETE)
+ * @param {id} req.params 
+ *  
+ */
 auth.updateUserState = async (req, res) => {
     try {
         let existingUserDetail = await AUTH_MODEL.findOne({ _id: req.params.id })
         if (existingUserDetail) {
-            let updateUserStatus = await AUTH_MODEL.findOneAndUpdate({ _id: req.params.id }, { state: 3 })
+            let updateUserStatus = await AUTH_MODEL.findOneAndUpdate({ _id: req.params.id }, { stateId: 3 })
             if (updateUserStatus) {
+                let detail = await AUTH_MODEL.findOne({ _id: req.params.id })
                 res.status(SUCCESS_STATUS).send({
                     success: true,
                     message: 'User status is changed successfully',
-                    data: updateUserStatus
+                    data: detail
                 })
             }
             else {
@@ -286,21 +292,37 @@ auth.updateUserState = async (req, res) => {
 }
 
 
-// delete user
+/**
+ *  DELETE PERMENANT USER FROM DATABASE
+ * @param {id} req.params 
+ *  
+ */
 auth.deleteUser = async (req, res) => {
     try {
-        let deleteUser = await AUTH_MODEL.findOneAndDelete({ _id: req.params.id })
-        if (deleteUser) {
-            res.status(BAD_REQUEST).send({
-                success: false,
-                message: 'User delete Successfully',
-                data: deleteUser
-            })
+
+        // only admin can delete
+        if (req.role == 1) {
+
+
+            let deleteUser = await AUTH_MODEL.findOneAndDelete({ _id: req.params.id })
+            if (deleteUser) {
+                res.status(BAD_REQUEST).send({
+                    success: false,
+                    message: 'User delete Successfully',
+                    data: deleteUser
+                })
+            }
+            else {
+                res.status(BAD_REQUEST).send({
+                    success: false,
+                    message: 'Something went wrong'
+                })
+            }
         }
         else {
             res.status(BAD_REQUEST).send({
                 success: false,
-                message: 'Something went wrong'
+                message: 'Permission denied only admin have permission to delete the user'
             })
         }
     }
