@@ -24,8 +24,13 @@ const authSchema = new mongoose.Schema({
     token: {
         type: String
     },
+    role: {
+        type: Number,
+        enum : [0,1], // 0=> USER 1=> ADMIN  
+        default: 0
+    },
     stateId: {
-        type: String,
+        type: Number,
         enum : [0,1,2,3], // 0=> PENDING 1=> ACTIVE 2 => INACTIVE 3 =>DELETE 
         default: 0
     },

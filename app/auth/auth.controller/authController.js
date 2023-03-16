@@ -49,6 +49,9 @@ auth.signup = async (req, res) => {
     }
     catch (err) {
         console.log(err)
+        res.send({
+            message:err.message
+        })
     }
 
 }
@@ -69,10 +72,16 @@ auth.login = async (req, res) => {
             // compare password
             const result = await bcrypt.compare(data.password, existingUser.password);
             if (result) {
+                // send detail of user in token
+                tokenPayload = {
+                    userId:existingUser._id,
+                    role:existingUser.role,
+                    email:existingUser.email
 
+                }
                 // Create token
                 const jwtToken = jwt.sign(
-                    { id: existingUser._id },
+                    tokenPayload,
                     process.env.TOKEN_KEY,
                     {
                         expiresIn: "2h",
@@ -124,32 +133,41 @@ auth.login = async (req, res) => {
  */
 auth.editUser = async (req, res) => {
     try {
-
-        data = req.body
-        let existingUserDetail = await AUTH_MODEL.findOne({ _id: req.params.id })
-        if (existingUserDetail) {
-            let updateUserDetails = await AUTH_MODEL.findOneAndUpdate({ _id: req.params.id }, { data })
-            if (updateUserDetails) {
-                res.status(SUCCESS_STATUS).send({
-                    success: true,
-                    message: 'User edit successfully',
-                    data: updateUserDetails
-                })
-            }
-            else {
-                res.status(BAD_REQUEST).send({
-                    success: false,
-                    message: 'Something went wrong'
-                })
-            }
-
+// only Admin (role:1) have permission to edit user detials
+if(req.role == 1){
+    data = req.body    
+    let existingUserDetail = await AUTH_MODEL.findOne({ _id: req.params.id })
+    if (existingUserDetail) {
+        let updateUserDetails = await AUTH_MODEL.findOneAndUpdate({ _id: req.params.id }, { data })
+        if (updateUserDetails) {
+            res.status(SUCCESS_STATUS).send({
+                success: true,
+                message: 'User edit successfully',
+                data: updateUserDetails
+            })
         }
         else {
             res.status(BAD_REQUEST).send({
                 success: false,
-                message: 'User not found'
+                message: 'Something went wrong'
             })
         }
+
+    }
+    else {
+        res.status(BAD_REQUEST).send({
+            success: false,
+            message: 'User not found'
+        })
+    }
+}
+else{
+    res.status(BAD_REQUEST).send({
+        success:false,
+        message:'Only admin have permission to edit user details'
+    })
+}
+      
     }
     catch (error) {
         console.log(error)

@@ -4,15 +4,20 @@ require('dotenv').config()
 
 
 const token_verify = (req, res, next) => {
+
   const token =
     req.body.token || req.query.token || req.headers["x-access-token"];
+
 
   if (!token) {
     return res.status(403).send("A token is required for authentication");
   }
   try {
     const decoded = jwt.verify(token, process.env.TOKEN_KEY);
-    req.user = decoded;
+    console.log("decoded",decoded)
+    req.userId = decoded.userId
+    req.role = decoded.role
+    req.email = decoded.email
   } catch (err) {
     return res.status(401).send("Invalid Token");
   }
