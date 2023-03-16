@@ -1,3 +1,9 @@
+/*
+Author (Rajat chauhan)
+
+emailId : rajatchauhan527@gmail.com
+
+*/
 const jwt = require("jsonwebtoken");
 const process = require('process')
 require('dotenv').config()

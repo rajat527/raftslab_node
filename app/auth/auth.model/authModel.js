@@ -1,3 +1,10 @@
+/*
+Author (Rajat chauhan)
+
+emailId : rajatchauhan527@gmail.com
+
+*/
+
 const mongoose = require('mongoose')
 const authSchema = new mongoose.Schema({
 
@@ -9,8 +16,12 @@ const authSchema = new mongoose.Schema({
         type: String
     },
 
-    full_name: {
+    username: {
         type: String
+    },
+    phone:{
+        type:String
+
     },
 
     email: {

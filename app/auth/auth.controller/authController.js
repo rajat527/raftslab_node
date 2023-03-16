@@ -1,3 +1,10 @@
+/*
+Author (Rajat chauhan)
+
+emailId : rajatchauhan527@gmail.com
+
+*/
+
 const { BAD_REQUEST, SUCCESS_STATUS } = require('../../../helper/statusCode');
 const AUTH_MODEL = require('../auth.model/authModel')
 const bcrypt = require("bcrypt")
