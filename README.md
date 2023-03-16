@@ -1,5 +1,5 @@
 
-1. npm i (to install the package in package.json file)
+1. npm i (install package , create node_module file and create package-lock.json file )
 2. npm start (to start the nodejs server on port 3025)
 
 WEBSOCKET
