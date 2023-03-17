@@ -24,6 +24,7 @@ auth.signup = async (req, res) => {
                 success: false,
                 message: "Email already exist"
             })
+            return
         }
         if (!(data.email && data.password)) {
             res.status(BAD_REQUEST).send({
@@ -98,10 +99,12 @@ auth.login = async (req, res) => {
 
                 let saveTokenInUseCredential = await AUTH_MODEL.findOneAndUpdate({ email: data.email }, { token: jwtToken })
                 if (saveTokenInUseCredential) {
+                    let detail = await AUTH_MODEL.findOne({email:data.email})
+
                     res.status(SUCCESS_STATUS).send({
                         success: true,
                         message: "user login successfully",
-                        data: saveTokenInUseCredential
+                        data: detail
                     })
                 }
                 else {
@@ -141,7 +144,7 @@ auth.login = async (req, res) => {
 auth.editUser = async (req, res) => {
     try {
         // only Admin (role:1) have permission to edit user detials
-        if (req.role == 0) {
+        if (req.role == 1) {
             data = req.body
             let existingUserDetail = await AUTH_MODEL.findOne({ _id: req.params.id })
             if (existingUserDetail) {
@@ -195,16 +198,25 @@ auth.editUser = async (req, res) => {
 auth.getAllUserList = async (req, res) => {
     try {
         const pageOptions = {
-            page: parseInt(req.query.page, 10) || 0,
-            limit: parseInt(req.query.limit, 10) || 10
+            page: parseInt(req.query.page) || 1,
+            limit: parseInt(req.query.limit) || 10
         }
         let userList = await AUTH_MODEL.find()
             .skip(pageOptions.page * pageOptions.limit)
             .limit(pageOptions.limit)
+       
+        
         if (userList) {
+                 
+        let totalCount = await AUTH_MODEL.find()
+        .skip(pageOptions.page * pageOptions.limit)
+        .limit(pageOptions.limit)
+        .countDocuments()  
+
             res.status(SUCCESS_STATUS).send({
                 success: true,
                 message: 'User list found successfully',
+                count: totalCount,
                 data: userList
             })
         }
