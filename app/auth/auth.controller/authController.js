@@ -354,4 +354,55 @@ auth.deleteUser = async (req, res) => {
     }
 }
 
+
+// Cron job  2023-03-20T16:17:30.232Z   2023-03-20T16:06:35.534+00:00
+auth.croneSet = async (req,res)=>{
+    try{
+        let currunt_date_ob = new Date().toISOString();
+        let previous = new Date(Date.now() - 43200 * 1000).toISOString()
+       let date_ob =  new Date(Date.now() - 86400 * 1000).toISOString()
+        
+         console.log("date_ob",date_ob)
+         console.log("previous_date_ob",previous)
+
+         console.log("currunt_date_ob",currunt_date_ob)
+
+        let findDetailsnew = await AUTH_MODEL.find({
+            $and: [
+                {createdAt: { $gt: date_ob }},
+                {createdAt: {$lt:previous}},
+                {stateId:0}
+            ]
+        })
+
+      
+
+        if(findDetailsnew){
+            let array = []
+            findDetailsnew.forEach(element => {
+                array.push(element.id)
+            });
+
+            let update = await AUTH_MODEL.updateMany({$in:array},{stateId:1})
+            res.status(200).send({
+                success:true,
+                message:'update successfully'
+                
+            })
+            return
+
+        }
+        else{
+            res.status(400).send({
+                success:false,
+                message:'update failed'
+            })
+        }
+      
+    }
+    catch (error) {
+        console.log(error)
+    }
+}
+
 module.exports = auth
