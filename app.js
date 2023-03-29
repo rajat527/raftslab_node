@@ -6,7 +6,8 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
+var cron = require("node-cron");
+var auth = require('./app/auth/auth.controller/authController')
 var app = express();
 
 // view engine setup
@@ -37,5 +38,12 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
+// cron.schedule("*/5 * * * * *", function () {
+//   console.log("---------------------");
+//   console.log("running a task every 5 seconds");
+//   auth.croneSet()
+// });
 
 module.exports = app;
