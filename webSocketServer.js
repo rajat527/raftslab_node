@@ -7,7 +7,7 @@ server.listen(8080,()=>{console.log('websocket server is listen on port 8080')})
 
 // routing
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/client.html');
 });
 
 var usernames = {};
