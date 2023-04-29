@@ -11,6 +11,7 @@ var app = require('express');
 const AUTH_CONTROLLER = require('../app/auth/auth.controller/authController')
 const AUTHENTICATION = require('../middleware/auth')
 const VALIDATION = require('../middleware/validationMiddleware')
+const CONTACT_CONTROLLER = require('../app/user/controller/user.controller')
 
 require('express-group-routes');
 /* GET home page. */
@@ -27,7 +28,7 @@ router.get("/getById/:id",AUTHENTICATION, AUTH_CONTROLLER.getSingleUserDetail)
 router.put("/softDelete/:id",AUTHENTICATION, AUTH_CONTROLLER.updateUserState)
 router.delete("/delete/:id",AUTHENTICATION, AUTH_CONTROLLER.deleteUser)
 
-
+router.post("/contact/add",AUTHENTICATION, CONTACT_CONTROLLER.addContact)
 
 
 
