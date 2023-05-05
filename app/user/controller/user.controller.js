@@ -49,6 +49,7 @@ _contact.addContact = async(req,res,next)=>{
                 } 
               })
         }
+
         let filesToSave =[]
         uploadStorage(req, res, async function(err) {
 
@@ -74,7 +75,10 @@ _contact.addContact = async(req,res,next)=>{
                     url:file.path,
                 })
              });
-             if (req.body.dob < 18) {
+
+             let curruntDate = new Date()
+            let ageDiff = curruntDate.getFullYear() - new Date(req.body.dob).getFullYear()
+             if (ageDiff < 18) {
                 res.status(400).send({
                     success: false,
                     message:'Minimum age should be more than 18 years'
@@ -82,7 +86,6 @@ _contact.addContact = async(req,res,next)=>{
                 return 
                 
              }
-
 
              if(!req.body.isSameAddress){
      
